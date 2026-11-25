@@ -1,0 +1,125 @@
+
+
+<!DOCTYPE html>
+
+<html lang="sv">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="theme-color" content="#101713">
+
+<title>Fondkollen</title>
+
+<style>
+
+body{background:#0b100e;color:#f4f7f4;font-family:-apple-system,Arial;padding:22px;margin:auto;max-width:500px}
+
+h1{font-size:32px}
+
+.card{background:#17221b;border:1px solid #344438;border-radius:20px;padding:20px;margin:18px 0}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+small{color:#9aaba0}
+
+.num{font-size:30px;font-weight:bold;margin-top:8px}
+
+.green{color:#52d18b}.red{color:#ff7272}
+
+.signal{font-weight:bold;margin-top:18px;font-size:17px}
+
+input,select,button{width:100%;padding:13px;margin-top:9px;border-radius:10px;border:1px solid #435448;background:#0d1511;color:white;font-size:16px;box-sizing:border-box}
+
+button{background:#52d18b;color:#102016;font-weight:bold;border:0}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>📈 Fondkollen</h1>
+
+<small>DINA FONDER · 2026</small>
+
+<div id="funds"></div>
+
+<div class="card">
+
+<h3>Uppdatera fondvärden</h3>
+
+<div id="inputs"></div>
+
+<button onclick="save()">Spara uppdatering</button>
+
+</div>
+
+<script>
+
+const names=["Access Global","Robur Technology"];
+
+let data=JSON.parse(localStorage.getItem("fondkollen")||"null")||[
+
+{year:"",day:"",signal:"AVVAKTA"},
+
+{year:"",day:"",signal:"AVVAKTA"}
+
+];
+
+function render(){
+
+document.getElementById("funds").innerHTML=names.map((n,i)=>{
+
+let f=data[i];
+
+return `<div class="card"><h2>${n}</h2>
+
+<div class="grid">
+
+<div><small>I ÅR</small><div class="num ${Number(f.year)>=0?'green':'red'}">${f.year===""?"—":(Number(f.year)>0?"+":"")+f.year+"%"}</div></div>
+
+<div><small>IDAG</small><div class="num ${Number(f.day)>=0?'green':'red'}">${f.day===""?"—":(Number(f.day)>0?"+":"")+f.day+"%"}</div></div>
+
+</div><div class="signal">${f.signal}</div></div>`;
+
+}).join("");
+
+document.getElementById("inputs").innerHTML=names.map((n,i)=>`
+
+<h4>${n}</h4>
+
+<input id="y${i}" type="number" step="0.01" placeholder="Årets utveckling %" value="${data[i].year}">
+
+<input id="d${i}" type="number" step="0.01" placeholder="Dagens utveckling %" value="${data[i].day}">
+
+<select id="s${i}">
+
+${["KÖP","AVVAKTA","SÄLJ / MINSKA"].map(x=>`<option ${data[i].signal===x?"selected":""}>${x}</option>`).join("")}
+
+</select>`).join("");
+
+}
+
+function save(){
+
+data=names.map((n,i)=>({year:document.getElementById("y"+i).value,day:document.getElementById("d"+i).value,signal:document.getElementById("s"+i).value}));
+
+localStorage.setItem("fondkollen",JSON.stringify(data));
+
+render();
+
+alert("Fondpanelen är sparad!");
+
+}
+
+render();
+
+</script>
+
+</body>
+
+</html>
